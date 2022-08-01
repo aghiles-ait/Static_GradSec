@@ -1279,20 +1279,29 @@ void run_classifier(int argc, char **argv)
         int ngpus;
         int *gpus = read_intlist(gpu_list, &ngpus, gpu_index);
 
-        // partition point of DNN
-        int pp_start = find_int_arg(argc, argv, "-pp_start", 999);
-        if(pp_start == 999){ // when using pp_start_f for forzen first layers outside TEE
-            pp_start = find_int_arg(argc, argv, "-pp_start_f", 999);
+        // partition points of DNN
+        /******************************************************************************************************/
+        int pp_start1 = find_int_arg(argc, argv, "-pp_start1", 999);
+        if(pp_start1 == 999){ // when using pp_start_f for forzen first layers outside TEE
+            pp_start1 = find_int_arg(argc, argv, "-pp_start_f", 999);
             frozen_bool = 1;
         }
-        if(pp_start == 999){ // when using pp_f_only for forzen first layers (all in REE)
-            pp_start = find_int_arg(argc, argv, "-pp_f_only", 999);
+        if(pp_start1 == 999){ // when using pp_f_only for forzen first layers (all in REE)
+            pp_start1 = find_int_arg(argc, argv, "-pp_f_only", 999);
             frozen_bool = 2;
         }
 
-        partition_point1 = pp_start - 1;
-        int pp_end = find_int_arg(argc, argv, "-pp_end", 999);
-        partition_point2 = pp_end;
+        partition_point1 = pp_start1 - 1;
+        int pp_end1 = find_int_arg(argc, argv, "-pp_end1", 999);
+        partition_point2 = pp_end1;
+        /******************************************************************************************************/
+        int pp_start2 = find_int_arg(argc, argv, "-pp_start2", 999);
+
+        partition_point3 = pp_start2 - 1;
+        int pp_end2 = find_int_arg(argc, argv, "-pp_end2", 999);
+        partition_point4 = pp_end2;
+
+
         int dp = find_int_arg(argc, argv, "-dp", -1);
         global_dp = dp;
 

@@ -127,7 +127,7 @@ layer make_connected_layer(int batch, int inputs, int outputs, ACTIVATION activa
 #endif
     l.activation = activation;
 
-    if(count_global <= partition_point1 || count_global > partition_point2){
+    if(count_global <= partition_point1 || (count_global > partition_point2 && count_global <= partition_point3) || count_global > partition_point4){
         fprintf(stderr, "connected                            %4d  ->  %4d\n", inputs, outputs);
     }else{
         fprintf(stderr, "connected_TA                         %4d  ->  %4d\n", inputs, outputs);

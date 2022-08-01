@@ -51,7 +51,7 @@ maxpool_layer make_maxpool_layer(int batch, int h, int w, int c, int size, int s
     #endif
   
   
-    if(count_global <= partition_point1 || count_global > partition_point2){
+    if(count_global <= partition_point1 || (count_global > partition_point2 && count_global <= partition_point3) || count_global > partition_point4){
         fprintf(stderr, "max          %d x %d / %d  %4d x%4d x%4d   ->  %4d x%4d x%4d\n", size, size, stride, w, h, c, l.out_w, l.out_h, l.out_c);
     }else{
         fprintf(stderr, "max_TA       %d x %d / %d  %4d x%4d x%4d   ->  %4d x%4d x%4d\n", size, size, stride, w, h, c, l.out_w, l.out_h, l.out_c);

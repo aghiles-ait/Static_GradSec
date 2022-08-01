@@ -43,6 +43,8 @@
 int count_global = 0;
 int partition_point1 = 0;
 int partition_point2 = 0;
+int partition_point3 = 0;
+int partition_point4 = 0;
 int frozen_bool = 0;
 int sepa_save_bool = 0;
 int global_dp = 0;
@@ -217,7 +219,7 @@ convolutional_layer parse_convolutional(list *options, size_params params)
     layer.dot = option_find_float_quiet(options, "dot", 0);
 
 
-    if(count_global > partition_point1 && count_global <= partition_point2){
+    if((count_global > partition_point1 && count_global <= partition_point2) || (count_global > partition_point3 && count_global <= partition_point4)){
     make_convolutional_layer_CA(batch,h,w,c,n,groups,size,stride,padding,activation, batch_normalize, binary, xnor, params.net->adam, layer.flipped, layer.dot);
     }
 
@@ -284,7 +286,7 @@ layer parse_connected(list *options, size_params params)
     layer l = make_connected_layer(params.batch, params.inputs, output, activation, batch_normalize, params.net->adam);
 
     // send parameters into TA
-    if(count_global > partition_point1 && count_global <= partition_point2){
+    if((count_global > partition_point1 && count_global <= partition_point2) || (count_global > partition_point3 && count_global <= partition_point4)){
         make_connected_layer_CA(params.batch, params.inputs, output, activation, batch_normalize, params.net->adam);
     }
     return l;
@@ -303,7 +305,7 @@ layer parse_softmax(list *options, size_params params)
     l.spatial = option_find_float_quiet(options, "spatial", 0);
     l.noloss =  option_find_int_quiet(options, "noloss", 0);
 
-    if(count_global > partition_point1 && count_global <= partition_point2){
+    if((count_global > partition_point1 && count_global <= partition_point2) || (count_global > partition_point3 && count_global <= partition_point4)){
         make_softmax_layer_CA(params.batch, params.inputs, groups, l.temperature, l.w, l.h, l.c, l.spatial, l.noloss);
     }
 
@@ -464,7 +466,7 @@ cost_layer parse_cost(list *options, size_params params)
     layer.noobject_scale =  option_find_float_quiet(options, "noobj", 1);
     layer.thresh =  option_find_float_quiet(options, "thresh",0);
 
-    if(count_global > partition_point1 && count_global <= partition_point2){
+    if((count_global > partition_point1 && count_global <= partition_point2) || (count_global > partition_point3 && count_global <= partition_point4)){
         make_cost_layer_CA(params.batch, params.inputs, type, scale, layer.ratio, layer.noobject_scale, layer.thresh);
     }
 
@@ -528,7 +530,7 @@ maxpool_layer parse_maxpool(list *options, size_params params)
 
     maxpool_layer layer = make_maxpool_layer(batch,h,w,c,size,stride,padding);
 
-    if(count_global > partition_point1 && count_global <= partition_point2){
+    if((count_global > partition_point1 && count_global <= partition_point2) || (count_global > partition_point3 && count_global <= partition_point4)){
         make_maxpool_layer_CA(batch,h,w,c,size,stride,padding);
     }
 
@@ -546,7 +548,7 @@ avgpool_layer parse_avgpool(list *options, size_params params)
 
     avgpool_layer layer = make_avgpool_layer(batch,w,h,c);
 
-    if(count_global > partition_point1 && count_global <= partition_point2){
+    if((count_global > partition_point1 && count_global <= partition_point2) || (count_global > partition_point3 && count_global <= partition_point4)){
         make_avgpool_layer_CA(batch,h,w,c);
     }
 
@@ -564,7 +566,7 @@ dropout_layer parse_dropout(list *options, size_params params, float *net_prev_o
     layer.output = net_prev_output;
     layer.delta = net_prev_delta;
 
-    if(count_global > partition_point1 && count_global <= partition_point2){
+    if((count_global > partition_point1 && count_global <= partition_point2) || (count_global > partition_point3 && count_global <= partition_point4)){
         make_dropout_layer_CA(params.batch, params.inputs, probability, params.w, params.h, params.c, net_prev_output, net_prev_delta);
     }
 
@@ -787,7 +789,7 @@ void parse_net_options(list *options, network *net)
     net->max_batches = option_find_int(options, "max_batches", 0);
 
     // net->n - partition_point1 - 1
-    make_network_CA(partition_point2 - partition_point1, net->learning_rate, net->momentum, net->decay, net->time_steps, net->notruth, net->batch, net->subdivisions, net->random, net->adam, net->B1, net->B2, net->eps, net->h, net->w, net->c, net->inputs, net->max_crop, net->min_crop, net->max_ratio, net->min_ratio, net->center, net->clip, net->angle, net->aspect, net->saturation, net->exposure, net->hue, net->burn_in, net->power, net->max_batches);
+    make_network_CA((partition_point2 - partition_point1)+(partition_point4-partition_point3), net->learning_rate, net->momentum, net->decay, net->time_steps, net->notruth, net->batch, net->subdivisions, net->random, net->adam, net->B1, net->B2, net->eps, net->h, net->w, net->c, net->inputs, net->max_crop, net->min_crop, net->max_ratio, net->min_ratio, net->center, net->clip, net->angle, net->aspect, net->saturation, net->exposure, net->hue, net->burn_in, net->power, net->max_batches);
 }
 
 int is_network(section *s)
@@ -911,6 +913,9 @@ network *parse_network_cfg(char *filename)
 
         // identify first layers outside TEE and then set to freeze
         if(partition_point1 == count && frozen_bool == 1){
+            l.stopbackward = 1;
+        }
+        if(partition_point3 == count && frozen_bool == 1){
             l.stopbackward = 1;
         }
         if(partition_point1 == count && frozen_bool == 2){
@@ -1227,7 +1232,7 @@ void save_weights_upto(network *net, char *filename, int cutoff)
         layer l = net->layers[i];
         if (l.dontsave) continue;
 
-        if(i > partition_point1 && i <= partition_point2){
+        if((i > partition_point1 && i <= partition_point2) || (i > partition_point3 && i<=partition_point4)){
             int layerTA_i = i - partition_point1 - 1;
             comm_save_weights_layer(l, layerTA_i);
         }
@@ -1263,7 +1268,7 @@ void save_weights_separate(network *net, char *filename0, int cutoff)
         layer l = net->layers[i];
         if (l.dontsave) continue;
 
-        if(i <= partition_point1 || i > partition_point2){
+        if(i <= partition_point1 || (i > partition_point2 && i <= partition_point3) || i > partition_point4){
            save_weights_layer(l, fp_ree);
         }
     }
@@ -1284,7 +1289,7 @@ void save_weights_separate(network *net, char *filename0, int cutoff)
         layer l = net->layers[i];
         if (l.dontsave) continue;
 
-        if(i > partition_point1 && i <= partition_point2){
+        if((i > partition_point1 && i <= partition_point2) || (i > partition_point3 && i <= partition_point4)){
            int layerTA_i = i - partition_point1 - 1;
            comm_save_weights_layer(l, layerTA_i);
            save_weights_layer(l, fp_tee);
@@ -1614,7 +1619,7 @@ void load_weights_upto(network *net, char *filename, int start, int cutoff)
         if (l.dontload) continue;
 
         // load weights of the NW side
-        if(i <= partition_point1 || i > partition_point2){
+        if(i <= partition_point1 || (i > partition_point2 && i <= partition_point3) || i > partition_point4){
             load_weights_layer(l, fp, transpose);
 
         // load weights of the SW side
@@ -1668,7 +1673,7 @@ void load_weights_separate(network *net, char *filename0, int start, int cutoff)
         if (l.dontload) continue;
 
         // load weights of the NW side
-        if(i <= partition_point1 || i > partition_point2){
+        if(i <= partition_point1 || (i> partition_point2 && i <= partition_point3) || i > partition_point4){
             load_weights_layer(l, fp_ree, transpose_ree);
         }
     }
@@ -1699,7 +1704,7 @@ void load_weights_separate(network *net, char *filename0, int start, int cutoff)
         if (l.dontload) continue;
 
         // load weights of the SW side
-        if(i > partition_point1 && i <= partition_point2){
+        if(i > partition_point1 && i <= partition_point2) || (i > partition_point3 && i <= partition_point4) {
             int layerTA_i = i - partition_point1 - 1;
             comm_load_weights_layer(l, fp_tee, layerTA_i, transpose_tee);
         }

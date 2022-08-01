@@ -7,7 +7,7 @@
 avgpool_layer make_avgpool_layer(int batch, int w, int h, int c)
 {
 
-    if(count_global <= partition_point1 || count_global > partition_point2){
+    if(count_global <= partition_point1 || (count_global > partition_point2 && count_global <= partition_point3) || count_global > partition_point4){
         fprintf(stderr, "avg                     %4d x%4d x%4d   ->  %4d\n",  w, h, c, c);
     }else{
         fprintf(stderr, "avg_TA                  %4d x%4d x%4d   ->  %4d\n",  w, h, c, c);

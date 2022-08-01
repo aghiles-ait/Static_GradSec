@@ -5,6 +5,9 @@
 
 extern int partition_point1;
 extern int partition_point2;
+extern int partition_point3;
+extern int partition_point4;
+
 extern int frozen_bool;
 extern int sepa_save_bool;
 extern int count_global;
