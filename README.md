@@ -51,7 +51,7 @@ Let `$PATH_OPTEE$` be the path of OPTEE, `$PATH_gradsec$` be the path of gradsec
 
 2) copy GradSec to example dir
 ```
-mkdir $PATH_OPTEE$/optee_examples/darknetz
+mkdir $PATH_OPTEE$/optee_examples/gradsec
 cp -a $PATH_gradsec$/. $PATH_OPTEE$/optee_examples/gradsec/
 ```
 
@@ -124,16 +124,6 @@ Layers with `_TA` are running in the TrustZone. When the last layer is inside th
 # I/TA:  loss = 1.52641, avg loss = 1.57889 from the TA
 ...
 ```
-
-2) To use pre-trained models
-
-You can also load a pre-trained model into both Normal World and Secure World and then fine-tune the model, by commands:
-```
-darknetp classifier train -pp_start 4 -pp_end 9 cfg/mnist.dataset cfg/mnist_lenet.cfg models/mnist/mnist_lenet.weights
-```
-
-~~(Note: the Secure World only accepts a model that has been trained using the same `-pp` value, since layers are encrypted when they are transferred back to save and layers will be decrypted when deploying into the TrustZone)~~
-(Note: The encryption and decryption when layers go in and out the TEE have been disabled considering it is only for simulation here)
 
 
 
