@@ -5,8 +5,9 @@ This is an application that runs two chunks of non-successive layers of a Deep N
 This application is based on [DarkneTZ](https://github.com/mofanv/darknetz) and needs to be run with [OP-TEE](https://www.op-tee.org/), an open source framework for Arm TrustZone.
 
 ---------------------------
-"If you find this project useful, please cite this paper:
-```@inproceedings{10.1145/3528535.3565255,
+If you find this project useful, please cite this paper:
+<code>
+@inproceedings{10.1145/3528535.3565255,
 author = {Messaoud, Aghiles Ait and Mokhtar, Sonia Ben and Nitu, Vlad and Schiavoni, Valerio},
 title = {Shielding Federated Learning Systems against Inference Attacks with ARM TrustZone},
 year = {2022},
@@ -21,8 +22,8 @@ numpages = {14},
 keywords = {privacy, federated learning, TrustZone, trusted execution environment},
 location = {Quebec, QC, Canada},
 series = {Middleware '22}
-}```
-"
+}
+</code>
 
 # Prerequisites
 You can run this application with real TrustZone or a simulated one by using QEMU.
