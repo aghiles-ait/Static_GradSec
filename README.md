@@ -5,10 +5,24 @@ This is an application that runs two chunks of non-successive layers of a Deep N
 This application is based on [DarkneTZ](https://github.com/mofanv/darknetz) and needs to be run with [OP-TEE](https://www.op-tee.org/), an open source framework for Arm TrustZone.
 
 ---------------------------
-Please consider citing this corresponding paper at [MobiSys 2020](https://www.sigmobile.org/mobisys/2020/) if this project is helpful to you:
-
-**[DarkneTZ: Towards Model Privacy at the Edge using Trusted Execution Environments](https://arxiv.org/abs/2004.05703)** Fan Mo, Ali Shahin Shamsabadi, Kleomenis Katevas, Soteris Demetriou, Ilias Leontiadis, Andrea Cavallaro, Hamed Haddadi
-
+"If you find this project useful, please cite this paper:
+```@inproceedings{10.1145/3528535.3565255,
+author = {Messaoud, Aghiles Ait and Mokhtar, Sonia Ben and Nitu, Vlad and Schiavoni, Valerio},
+title = {Shielding Federated Learning Systems against Inference Attacks with ARM TrustZone},
+year = {2022},
+isbn = {9781450393409},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+url = {https://doi.org/10.1145/3528535.3565255},
+doi = {10.1145/3528535.3565255},
+booktitle = {Proceedings of the 23rd ACM/IFIP International Middleware Conference},
+pages = {335–348},
+numpages = {14},
+keywords = {privacy, federated learning, TrustZone, trusted execution environment},
+location = {Quebec, QC, Canada},
+series = {Middleware '22}
+}```
+"
 
 # Prerequisites
 You can run this application with real TrustZone or a simulated one by using QEMU.
